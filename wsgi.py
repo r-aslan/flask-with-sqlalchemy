@@ -49,3 +49,11 @@ def create_product():
         db.session.commit()
         return one_product_schema.jsonify(product), 200
     
+@app.route(f'{BASE_URL}/delete', methods=["POST"])
+def delete():
+    id = request.form.get("id")
+    product = db.session.query(Product).get(id)
+    db.session.delete(product)
+    db.session.commit()
+    return get_many_product()
+    
