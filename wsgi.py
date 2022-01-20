@@ -35,10 +35,17 @@ def get_one_product(id):
 
 @app.route(f'{BASE_URL}/product', methods=['POST'])
 def create_product():
-    product = Product(name=request.form.get("name"))
-    product = Product(description=request.form.get("description"))
-    db.session.add(product)
-    db.session.commit()
-    result = db.session.query.with_entities(product.name)
-    return one_product_schema.jsonify(result), 200
+    if(request.form.get("id") is None):
+        product = Product(name=request.form.get("name"))
+        product = Product(description=request.form.get("description"))
+        db.session.add(product)
+        db.session.commit()
+        result = db.session.query.with_entities(product.name)
+        return one_product_schema.jsonify(result), 200
+    else:
+        product = db.session.query(Product).get(request.form.get("id"))
+        product.name = request.form.get("name")
+        product.description = request.form.get("description")
+        db.session.commit()
+        return one_product_schema.jsonify(product), 200
     
